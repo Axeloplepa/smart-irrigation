@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechatronics Thesis: Automated Irrigation Subsystems</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #0d9488;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --border: #cbd5e1;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        header h1 { margin: 0; font-size: 2rem; font-weight: 700; }
+        header p { margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1.1rem; }
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .subsystem-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--primary);
+        }
+        .subsystem-card.power { border-left-color: #dc2626; }
+        .subsystem-card.field { border-left-color: var(--secondary); }
+        h2 { color: var(--dark); margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+        h3 { color: var(--primary); margin: 1rem 0 0.5rem 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th { background-color: #f1f5f9; color: var(--dark); font-weight: 600; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        .badge {
+            background-color: #e2e8f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        .badge.pin { background-color: #dbeafe; color: #1e40af; font-weight: bold; }
+        .badge.gnd { background-color: #fef3c7; color: #92400e; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Smart Agricultural Irrigation System</h1>
+        <p>Three-Subsystem Architecture Mechatronics Thesis Documentation</p>
+    </header>
+
+    <div class="container">
+
+        <!-- SUBSYSTEM 1 -->
+        <div class="subsystem-card logic">
+            <h2>Subsystem 1: Central Control Station (Shelter Side)</h2>
+            <p>Responsible for main edge-computing logic, human-machine interface tracking, and signal routing away from internal PSRAM lines.</p>
+            
+            <h3>Pin Location & Map Reference</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ESP32-S3 Dev Board Label</th>
+                        <th>Target Physical Component Terminal</th>
+                        <th>Functional Assignment Group</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge pin">5V</span></td>
+                        <td>Dual 20x4 LCDs, Flow Sensor Red Wire, Relay Header VCC</td>
+                        <td>Master 5V Logic Supply</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge gnd">GND</span></td>
+                        <td>10-Port Central Ground Bus Bar</td>
+                        <td>Main Signal Ground Reference</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">IO 8</span></td>
+                        <td>Both 20x4 LCD Screen 'SDA' Pins</td>
+                        <td>I2C Data Bus Matrix Assignment</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">IO 9</span></td>
+                        <td>Both 20x4 LCD Screen 'SCL' Pins</td>
+                        <td>I2C Clock Bus Matrix Assignment</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">IO 38</span></td>
+                        <td>4-Channel Relay Module Input Pin 'IN1'</td>
+                        <td>Pump Contactor Output (Glitch-Free Boot)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">IO 39</span></td>
+                        <td>4-Channel Relay Module Input Pin 'IN2'</td>
+                        <td>Valve 1 Relay Output (Glitch-Free Boot)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">IO 40</span></td>
+                        <td>4-Channel Relay Module Input Pin 'IN3'</td>
+                        <td>Valve 2 Relay Output (Glitch-Free Boot)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">IO 19</span></td>
+                        <td>Panel RS-485 Transceiver 'TXD / RO' Pin</td>
+                        <td>Hardware Serial 2 Receive Line (RX2)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">IO 20</span></td>
+                        <td>Panel RS-485 Transceiver 'RXD / DI' Pin</td>
+                        <td>Hardware Serial 2 Transmit Line (TX2)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SUBSYSTEM 2 -->
+        <div class="subsystem-card power">
+            <h2>Subsystem 2: Power Actuation Panel (Lower Deck)</h2>
+            <p>Manages dual-pole power isolation infrastructure, blocking high-voltage inductive fields and kickbacks from digital components.</p>
+            
+            <h3>Galvanic Isolation & Core Safety Controls</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component Label</th>
+                        <th>Wiring Path Assignment Location</th>
+                        <th>Isolation Protection Rule</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>16A Circuit Breaker</td>
+                        <td>Mains Input 220V AC Live Line Gateway</td>
+                        <td>Overcurrent Protection safety wall</td>
+                    </tr>
+                    <tr>
+                        <td>CJX2 Contactor Coil</td>
+                        <td>Jumpered from Terminal 3/L2 to A2, Triggered via Relay 1 NO to A1</td>
+                        <td>Magnetic Motor Drive isolation switch</td>
+                    </tr>
+                    <tr>
+                        <td>Relay Control Header</td>
+                        <td>Far-Left Header GND pin tied to Separate 5V Adapter Negative ONLY</td>
+                        <td>Optical Isolation Air-Gap (Shunt Jumper Removed)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SUBSYSTEM 3 -->
+        <div class="subsystem-card field">
+            <h2>Subsystem 3: Field Sensor Hub Node (Planter Beds)</h2>
+            <p>Handles localized environmental over-sampling and maps raw moisture values to percentages before sending them back across the property line.</p>
+            
+            <h3>Arduino Nano Data Acquisition Map</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Arduino Nano Base Connection</th>
+                        <th>Target Field Core Line Wire</th>
+                        <th>Planter Bed Telemetry Zone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge pin">Analog A0</span></td>
+                        <td>Solid Orange Wire (Capacitor Filter Active)</td>
+                        <td>Planter Bed 1: Moisture Sensor 1</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">Analog A1</span></td>
+                        <td>Solid Green Wire (Capacitor Filter Active)</td>
+                        <td>Planter Bed 1: Moisture Sensor 2</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">Analog A2</span></td>
+                        <td>Solid Orange Wire (Capacitor Filter Active)</td>
+                        <td>Planter Bed 2: Moisture Sensor 1</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge pin">Analog A3</span></td>
+                        <td>Solid Green Wire (Capacitor Filter Active)</td>
+                        <td>Planter Bed 2: Moisture Sensor 2</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge gnd">Nano Shield GND Bar</span></td>
+                        <td>Cat5e Blue & Blue-White Core Pair (19m long)</td>
+                        <td>Common Ground Data Bridge to ESP32 Panel</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>
